@@ -103,27 +103,30 @@ func (w *Weaviate) Retrieve(ctx context.Context, query []float32, topK int) ([]r
 
 	// Parse results
 	var results []ragkit.RetrievedDoc
-	resultData := response.Data["Get"].(map[string]any)
-	switch resultData[w.className].(type) {
-	case []any:
-		for _, obj := range resultData[w.className].([]any) {
-			objMap := obj.(map[string]any)
+	if resultData, ok := response.Data["Get"].(map[string]any); ok {
+		switch resultData[w.className].(type) {
+		case []any:
+			for _, obj := range resultData[w.className].([]any) {
+				objMap := obj.(map[string]any)
 
-			var metadata map[string]any
-			switch objMap["metadata"].(type) {
-			case map[string]any:
-				metadata = objMap["metadata"].(map[string]any)
+				var metadata map[string]any
+				switch objMap["metadata"].(type) {
+				case map[string]any:
+					metadata = objMap["metadata"].(map[string]any)
+				}
+
+				results = append(results, ragkit.RetrievedDoc{
+					// ID:       objMap["_id"].(string),
+					// Score:    objMap["_additional"].(map[string]any)["distance"].(float32),
+					Vector:   query, // Weaviate doesn't return the vector in the response
+					Text:     objMap["text"].(string),
+					Metadata: metadata,
+				})
 			}
-
-			results = append(results, ragkit.RetrievedDoc{
-				// ID:       objMap["_id"].(string),
-				// Score:    objMap["_additional"].(map[string]any)["distance"].(float32),
-				Vector:   query, // Weaviate doesn't return the vector in the response
-				Text:     objMap["text"].(string),
-				Metadata: metadata,
-			})
+		case nil:
+			return nil, fmt.Errorf("no results found")
 		}
-	case nil:
+	} else {
 		return nil, fmt.Errorf("no results found")
 	}
 
