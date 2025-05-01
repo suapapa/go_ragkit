@@ -1,16 +1,70 @@
-# ragkit: ragkit is a Go package to help index and retrieve documents for a RAG server
+# ragkit: A Go package for document indexing and retrieval in RAG systems
 
 ![ragkit_logo](_asset/ragkit_logo_256.webp)
 
-Install:
+ragkit is a Go package designed to simplify the implementation of Retrieval-Augmented Generation (RAG) systems.
+It includes the definition and implementation of a vectorizer interface that performs document indexing and retrieval,
+providing tools for vectorization and semantic search capabilities.
+
+## Installation
+
 ```sh
 go get github.com/suapapa/go_ragkit
 ```
 
-Usage:
+## Quick Start
+
 ```go
-import ragkit "github.com/suapapa/go_ragkit"
+import (
+    "context"
+    "fmt"
+    ragkit "github.com/suapapa/go_ragkit"
+)
+
+func main() {
+    // Create documents from text
+    docs := ragkit.MakeDocsFromTexts(
+        []string{
+            "고길동의 집에는 둘리, 도우너, 또치, 희동이, 철수, 영희가 살고 있다.",
+            "희동이는 고길동의 조카이다.",
+        },
+        nil,
+    )
+
+    // Initialize vectorizer (example with Weaviate)
+    vectorizer, err := ragkit.NewWeaviateVectorizer(...)
+    if err != nil {
+        panic(err)
+    }
+
+    // Index documents
+    ctx := context.Background()
+    for _, doc := range docs {
+        _, err = vectorizer.Index(ctx, doc)
+        if err != nil {
+            panic(err)
+        }
+    }
+
+    // Perform semantic search
+    query := "희동이와 고길동의 관계?"
+    results, err := vectorizer.RetrieveText(ctx, query, 1)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(results[0].Text) // 희동이는 고길동의 조카이다.
+}
 ```
 
-Examples:
-- [Weaviate with Ollama](examples/weaviate-ollama/)
+## Reference
+
+- [Weaviate with Ollama example](examples/weaviate-ollama/)
+- [Package documentation](https://pkg.go.dev/github.com/suapapa/go_ragkit).
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
