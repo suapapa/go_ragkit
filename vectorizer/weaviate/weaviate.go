@@ -11,21 +11,28 @@ import (
 var _ ragkit.Vectorizer = &Weaviate{}
 
 type Weaviate struct {
-	client   *weaviate.Client
-	embedder ragkit.Embedder
+	className string
+	client    *weaviate.Client
+	embedder  ragkit.Embedder
 }
 
-func NewWeaviate(client *weaviate.Client, embedder ragkit.Embedder) *Weaviate {
+func NewWeaviate(client *weaviate.Client, className string, embedder ragkit.Embedder) *Weaviate {
 	return &Weaviate{
-		client:   client,
-		embedder: embedder,
+		className: className,
+		client:    client,
+		embedder:  embedder,
 	}
 }
 
-func (w *Weaviate) Index(ctx context.Context, docs []ragkit.Document) error {
+func (w *Weaviate) Index(ctx context.Context, docs []ragkit.Document) ([]string, error) {
+	var ids []string
 	for _, doc := range docs {
 		var embedding []float32
 		var err error
+
+		if doc.ID == "" {
+			doc.ID = ragkit.GenerateID(doc.Text)
+		}
 
 		// Use provided vector if available, otherwise generate one
 		if doc.Vector != nil {
@@ -33,7 +40,7 @@ func (w *Weaviate) Index(ctx context.Context, docs []ragkit.Document) error {
 		} else {
 			vectors, err := w.embedder.Embed(ctx, doc.Text)
 			if err != nil {
-				return err
+				return nil, err
 			}
 			embedding = vectors[0]
 		}
@@ -46,28 +53,29 @@ func (w *Weaviate) Index(ctx context.Context, docs []ragkit.Document) error {
 
 		// Create object with embedding
 		_, err = w.client.Data().Creator().
-			WithClassName("Document").
+			WithClassName(w.className).
 			WithID(doc.ID).
 			WithProperties(data).
 			WithVector(embedding).
 			Do(ctx)
 		if err != nil {
-			return err
+			return nil, err
 		}
+		ids = append(ids, doc.ID)
 	}
-	return nil
+	return ids, nil
 }
 
 func (w *Weaviate) Delete(ctx context.Context, id string) error {
 	return w.client.Data().Deleter().
-		WithClassName("Document").
+		WithClassName(w.className).
 		WithID(id).
 		Do(ctx)
 }
 
 func (w *Weaviate) Exists(ctx context.Context, id string) (bool, error) {
 	_, err := w.client.Data().ObjectsGetter().
-		WithClassName("Document").
+		WithClassName(w.className).
 		WithID(id).
 		Do(ctx)
 	if err != nil {
@@ -82,7 +90,7 @@ func (w *Weaviate) Exists(ctx context.Context, id string) (bool, error) {
 func (w *Weaviate) Retrieve(ctx context.Context, query []float32, topK int) ([]ragkit.RetrievedDoc, error) {
 	// Get near vector results
 	response, err := w.client.GraphQL().Get().
-		WithClassName("Document").
+		WithClassName(w.className).
 		WithFields(graphql.Field{Name: "text"}, graphql.Field{Name: "metadata"}).
 		WithNearVector(w.client.GraphQL().NearVectorArgBuilder().
 			WithVector(query)).
