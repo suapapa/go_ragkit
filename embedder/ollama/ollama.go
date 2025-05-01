@@ -7,7 +7,7 @@ import (
 	ragkit "github.com/suapapa/go_ragkit"
 )
 
-var _ ragkit.Embeder = &Ollama{}
+var _ ragkit.Embedder = &Ollama{}
 
 type Ollama struct {
 	client *ollama_api.Client

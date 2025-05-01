@@ -8,14 +8,14 @@ import (
 	"github.com/weaviate/weaviate-go-client/v4/weaviate/graphql"
 )
 
-var _ ragkit.IndexerRetriever = &Weaviate{}
+var _ ragkit.Vectorizer = &Weaviate{}
 
 type Weaviate struct {
 	client   *weaviate.Client
-	embedder ragkit.Embeder
+	embedder ragkit.Embedder
 }
 
-func NewWeaviate(client *weaviate.Client, embedder ragkit.Embeder) *Weaviate {
+func NewWeaviate(client *weaviate.Client, embedder ragkit.Embedder) *Weaviate {
 	return &Weaviate{
 		client:   client,
 		embedder: embedder,
