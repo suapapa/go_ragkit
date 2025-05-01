@@ -1,12 +1,13 @@
+// Package ragkit provides utility functions for RAG (Retrieval-Augmented Generation) applications.
 package ragkit
 
 import (
-	"bytes"
 	"crypto/sha256"
-	"encoding/json"
 	"fmt"
 )
 
+// MakeDocsFromTexts creates a slice of Document from a slice of texts with optional metadata.
+// Each document will have a unique ID generated from its text content.
 func MakeDocsFromTexts(texts []string, metadata map[string]any) []Document {
 	docs := make([]Document, len(texts))
 	for i, text := range texts {
@@ -15,17 +16,9 @@ func MakeDocsFromTexts(texts []string, metadata map[string]any) []Document {
 	return docs
 }
 
-// GenerateID: Generate a unique ID for a document
+// GenerateID creates a UUID-like string from the input text using SHA-256 hash.
+// The generated ID follows the format: 8-4-4-4-12 hexadecimal characters.
 func GenerateID(text string) string {
 	hash := sha256.Sum256([]byte(text))
 	return fmt.Sprintf("%08x-%04x-%04x-%04x-%012x", hash[0:4], hash[4:6], hash[6:8], hash[8:10], hash[10:16])
-}
-
-func ToJSONStr(v any) string {
-	buff := bytes.NewBuffer(nil)
-	enc := json.NewEncoder(buff)
-	enc.SetIndent("", "  ")
-	enc.SetEscapeHTML(false)
-	enc.Encode(v)
-	return buff.String()
 }

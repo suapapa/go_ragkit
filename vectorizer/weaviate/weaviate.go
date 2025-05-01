@@ -108,7 +108,6 @@ func (w *Weaviate) Retrieve(ctx context.Context, query []float32, topK int) ([]r
 	case []any:
 		for _, obj := range resultData[w.className].([]any) {
 			objMap := obj.(map[string]any)
-			// log.Println(ragkit.ToJSONStr(objMap))
 
 			var metadata map[string]any
 			switch objMap["metadata"].(type) {
