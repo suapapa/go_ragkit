@@ -1,4 +1,4 @@
-# ragkit is a Go package to help index and retrieve documents for a RAG server
+# ragkit: ragkit is a Go package to help index and retrieve documents for a RAG server
 
 ![ragkit_logo](_asset/ragkit_logo_256.webp)
 

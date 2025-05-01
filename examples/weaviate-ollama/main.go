@@ -67,7 +67,7 @@ func main() {
 		if exist, err := vectorizer.Exists(ctx, doc.ID); err != nil {
 			panic(err)
 		} else if exist {
-			log.Printf("document %s already exists", doc.ID)
+			// log.Printf("document %s already exists", doc.ID)
 			continue
 		}
 
@@ -80,9 +80,12 @@ func main() {
 	// retrieve documents
 	log.Println("retrieving documents")
 	query := "희동이와 고길동의 관계?"
-	results, err := vectorizer.RetrieveText(ctx, query, 10)
+	results, err := vectorizer.RetrieveText(ctx, query, 3)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%s => %s\n", query, results[0].Text)
+	fmt.Printf("%s:\n", query)
+	for _, result := range results {
+		fmt.Println("-", result.Text)
+	}
 }
