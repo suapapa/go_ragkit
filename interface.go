@@ -1,11 +1,16 @@
 package ragkit
 
-import "context"
+import (
+	"context"
+	"fmt"
+)
 
 // Vectorizer is a combination of Indexer and Retriever
 type Vectorizer interface {
 	Indexer
 	Retriever
+
+	fmt.Stringer
 }
 
 // Embedder is a type that can embed texts into vectors
@@ -13,6 +18,7 @@ type Embedder interface {
 	// Embed: Convert texts to embedding vectors
 	Embed(ctx context.Context, texts ...string) ([][]float32, error)
 
+	fmt.Stringer
 	// // Dimension: Get the dimension of embedding vectors
 	// Dimension() int
 }

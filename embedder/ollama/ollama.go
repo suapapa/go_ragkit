@@ -2,6 +2,7 @@ package ollama
 
 import (
 	"context"
+	"fmt"
 
 	ollama_api "github.com/ollama/ollama/api"
 	ragkit "github.com/suapapa/go_ragkit"
@@ -42,6 +43,10 @@ func (o *Ollama) Embed(ctx context.Context, texts ...string) ([][]float32, error
 	}
 
 	return embeddings, nil
+}
+
+func (o *Ollama) String() string {
+	return fmt.Sprintf("Ollama(model: %s)", o.model)
 }
 
 // Dimension returns the dimension of the embedding vector

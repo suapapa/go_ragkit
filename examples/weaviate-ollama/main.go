@@ -47,6 +47,7 @@ func main() {
 		panic(err)
 	}
 	vectorizer := weaviate_vectorizer.NewWeaviate(weaviateClient, "FamilyTree", embedder)
+	fmt.Printf("vectorizer: %s\n", vectorizer)
 
 	// index documents
 	log.Println("indexing documents")

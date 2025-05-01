@@ -3,6 +3,7 @@ package weviate
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	ragkit "github.com/suapapa/go_ragkit"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate"
@@ -80,7 +81,7 @@ func (w *Weaviate) Exists(ctx context.Context, id string) (bool, error) {
 		WithID(id).
 		Do(ctx)
 	if err != nil {
-		if err.Error() == "object not found" {
+		if err.Error() == "object not found" || strings.Contains(err.Error(), "404") {
 			return false, nil
 		}
 		return false, err
@@ -141,3 +142,7 @@ func (w *Weaviate) RetrieveText(ctx context.Context, text string, topK int) ([]r
 
 	return w.Retrieve(ctx, vectors[0], topK)
 } // Get near text results
+
+func (w *Weaviate) String() string {
+	return fmt.Sprintf("Weaviate(className: %s) + embedder: %s", w.className, w.embedder)
+}
