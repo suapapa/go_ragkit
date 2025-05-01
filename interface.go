@@ -21,7 +21,7 @@ type Embedder interface {
 type Indexer interface {
 	// Index: Index multiple documents
 	// Returns: IDs of indexed documents
-	Index(ctx context.Context, docs []Document) ([]string, error)
+	Index(ctx context.Context, docs ...Document) ([]string, error)
 
 	// Delete: Delete a document by ID
 	Delete(ctx context.Context, id string) error
@@ -49,8 +49,9 @@ type Retriever interface {
 
 // RetrievedDoc is a type that represents a retrieved document from vector database
 type RetrievedDoc struct {
-	ID       string         // Document ID
+	// ID       string         // Document ID
+	// Score    float32        // Similarity score
 	Vector   []float32      // Retrieved vector
-	Score    float32        // Similarity score
+	Text     string         // Retrieved text
 	Metadata map[string]any // Optional metadata
 }

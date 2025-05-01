@@ -2,6 +2,7 @@ package weviate
 
 import (
 	"context"
+	"fmt"
 
 	ragkit "github.com/suapapa/go_ragkit"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate"
@@ -24,7 +25,7 @@ func NewWeaviate(client *weaviate.Client, className string, embedder ragkit.Embe
 	}
 }
 
-func (w *Weaviate) Index(ctx context.Context, docs []ragkit.Document) ([]string, error) {
+func (w *Weaviate) Index(ctx context.Context, docs ...ragkit.Document) ([]string, error) {
 	var ids []string
 	for _, doc := range docs {
 		var embedding []float32
@@ -46,7 +47,7 @@ func (w *Weaviate) Index(ctx context.Context, docs []ragkit.Document) ([]string,
 		}
 
 		// Create data object
-		data := map[string]interface{}{
+		data := map[string]any{
 			"text":     doc.Text,
 			"metadata": doc.Metadata,
 		}
@@ -102,14 +103,29 @@ func (w *Weaviate) Retrieve(ctx context.Context, query []float32, topK int) ([]r
 
 	// Parse results
 	var results []ragkit.RetrievedDoc
-	for _, obj := range response.Data["Get"].(map[string]interface{})["Document"].([]interface{}) {
-		objMap := obj.(map[string]interface{})
-		results = append(results, ragkit.RetrievedDoc{
-			ID:       objMap["_id"].(string),
-			Vector:   query, // Weaviate doesn't return the vector in the response
-			Score:    objMap["_additional"].(map[string]interface{})["distance"].(float32),
-			Metadata: objMap["metadata"].(map[string]interface{}),
-		})
+	resultData := response.Data["Get"].(map[string]any)
+	switch resultData[w.className].(type) {
+	case []any:
+		for _, obj := range resultData[w.className].([]any) {
+			objMap := obj.(map[string]any)
+			// log.Println(ragkit.ToJSONStr(objMap))
+
+			var metadata map[string]any
+			switch objMap["metadata"].(type) {
+			case map[string]any:
+				metadata = objMap["metadata"].(map[string]any)
+			}
+
+			results = append(results, ragkit.RetrievedDoc{
+				// ID:       objMap["_id"].(string),
+				// Score:    objMap["_additional"].(map[string]any)["distance"].(float32),
+				Vector:   query, // Weaviate doesn't return the vector in the response
+				Text:     objMap["text"].(string),
+				Metadata: metadata,
+			})
+		}
+	case nil:
+		return nil, fmt.Errorf("no results found")
 	}
 
 	return results, nil

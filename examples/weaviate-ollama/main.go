@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -18,12 +19,13 @@ import (
 
 var (
 	ollamaAddr       = cmp.Or(os.Getenv("OLLAMA_ADDR"), "http://localhost:11434")
-	ollamaEmbedModel = cmp.Or(os.Getenv("OLLAMA_EMBED_MODEL"), "nomic-embed-text")
+	ollamaEmbedModel = cmp.Or(os.Getenv("OLLAMA_EMBED_MODEL"), "bge-m3:latest")
 	weaviateAddr     = cmp.Or(os.Getenv("WEAVIATE_ADDR"), "http://localhost:8080")
 )
 
 func main() {
 	// define embedder
+	log.Println("defining embedder")
 	ollamaURL, err := url.Parse(ollamaAddr)
 	if err != nil {
 		panic(err)
@@ -32,6 +34,7 @@ func main() {
 	embedder := ollama_embedder.NewOllama(ollamaClient, ollamaEmbedModel)
 
 	// define vectorizer
+	log.Println("defining vectorizer")
 	weaviateURL, err := url.Parse(weaviateAddr)
 	if err != nil {
 		panic(err)
@@ -46,6 +49,7 @@ func main() {
 	vectorizer := weaviate_vectorizer.NewWeaviate(weaviateClient, "FamilyTree", embedder)
 
 	// index documents
+	log.Println("indexing documents")
 	docs := ragkit.MakeDocsFromTexts(
 		[]string{
 			"고길동의 집에는 둘리, 도우너, 또치, 희동이, 철수, 영희가 살고 있다.",
@@ -59,16 +63,26 @@ func main() {
 		nil,
 	)
 	ctx := context.Background()
-	_, err = vectorizer.Index(ctx, docs)
-	if err != nil {
-		panic(err)
+	for _, doc := range docs {
+		if exist, err := vectorizer.Exists(ctx, doc.ID); err != nil {
+			panic(err)
+		} else if exist {
+			log.Printf("document %s already exists", doc.ID)
+			continue
+		}
+
+		_, err = vectorizer.Index(ctx, doc)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	// retrieve documents
-	query := "둘리의 친구는 누구인가?"
+	log.Println("retrieving documents")
+	query := "희동이와 고길동의 관계?"
 	results, err := vectorizer.RetrieveText(ctx, query, 10)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(results)
+	fmt.Printf("%s => %s\n", query, results[0].Text)
 }
