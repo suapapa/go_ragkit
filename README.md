@@ -20,7 +20,7 @@ go get github.com/suapapa/go_ragkit
 import (
     // ...
     ragkit "github.com/suapapa/go_ragkit"
-	vstore_helper "github.com/suapapa/go_ragkit/vector_store/weaviate/helper"
+    vstore_helper "github.com/suapapa/go_ragkit/vector_store/weaviate/helper"
 )
 
 func main() {
@@ -44,11 +44,9 @@ func main() {
 
     // Index documents
     ctx := context.Background()
-    for _, doc := range docs {
-        _, err = vstore.Index(ctx, doc)
-        if err != nil {
-            panic(err)
-        }
+    _, err = vstore.Index(ctx, docs...)
+    if err != nil {
+        panic(err)
     }
 
     // Perform semantic search
@@ -64,8 +62,10 @@ func main() {
 ## Examples
 
 Pre-requirement - launch Weaviate for local vector DB:
-```
-docker run -it --rm -p 8080:8080 -p 50051:50051 cr.weaviate.io/semitechnologies/weaviate:1.30.2
+```sh
+docker run -it --rm \
+  -p 8080:8080 -p 50051:50051 \
+  cr.weaviate.io/semitechnologies/weaviate:1.30.2
 ```
 
 - [Examples](examples/)
