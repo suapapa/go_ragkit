@@ -40,7 +40,7 @@ func (w *Weaviate) Index(ctx context.Context, docs ...ragkit.Document) ([]string
 		if doc.Vector != nil {
 			embedding = doc.Vector
 		} else {
-			vectors, err := w.embedder.Embed(ctx, doc.Text)
+			vectors, err := w.embedder.EmbedTexts(ctx, doc.Text)
 			if err != nil {
 				return nil, err
 			}
@@ -144,7 +144,7 @@ func (w *Weaviate) Retrieve(ctx context.Context, query []float32, topK int, meta
 }
 
 func (w *Weaviate) RetrieveText(ctx context.Context, text string, topK int, metadataFieldNames ...string) ([]ragkit.RetrievedDoc, error) {
-	vectors, err := w.embedder.Embed(ctx, text)
+	vectors, err := w.embedder.EmbedTexts(ctx, text)
 	if err != nil {
 		return nil, err
 	}
@@ -153,5 +153,5 @@ func (w *Weaviate) RetrieveText(ctx context.Context, text string, topK int, meta
 } // Get near text results
 
 func (w *Weaviate) String() string {
-	return fmt.Sprintf("Weaviate(className: %s) + embedder: %s", w.className, w.embedder)
+	return fmt.Sprintf("Weaviate vectorizer for class, %s powered by embedder: %s", w.className, w.embedder)
 }

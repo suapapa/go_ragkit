@@ -5,33 +5,34 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net/http"
 	"net/url"
 	"os"
 
 	ragkit "github.com/suapapa/go_ragkit"
 
-	ollama_api "github.com/ollama/ollama/api"
-	ollama_embedder "github.com/suapapa/go_ragkit/embedder/ollama"
+	oai "github.com/openai/openai-go"
+	oai_option "github.com/openai/openai-go/option"
+	oai_embedder "github.com/suapapa/go_ragkit/embedder/openai"
 	weaviate_vectorizer "github.com/suapapa/go_ragkit/vectorizer/weaviate"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate"
 )
 
 var (
-	ollamaAddr       = cmp.Or(os.Getenv("OLLAMA_ADDR"), "http://localhost:11434")
-	ollamaEmbedModel = cmp.Or(os.Getenv("OLLAMA_EMBED_MODEL"), "bge-m3:latest")
-	weaviateAddr     = cmp.Or(os.Getenv("WEAVIATE_ADDR"), "http://localhost:8080")
+	oaiSecretKey  = cmp.Or(os.Getenv("OPENAI_SECRET_KEY"), "")
+	oaiEmbedModel = cmp.Or(os.Getenv("OPEAI_EMBED_MODEL"), "text-embedding-3-small")
+	weaviateAddr  = cmp.Or(os.Getenv("WEAVIATE_ADDR"), "http://localhost:8080")
 )
 
 func main() {
 	// define embedder
 	log.Println("defining embedder")
-	ollamaURL, err := url.Parse(ollamaAddr)
-	if err != nil {
-		panic(err)
-	}
-	ollamaClient := ollama_api.NewClient(ollamaURL, http.DefaultClient)
-	embedder := ollama_embedder.New(ollamaClient, ollamaEmbedModel)
+	log.Println("oaiSecretKey", oaiSecretKey)
+
+	oaiClient := oai.NewClient(
+		// oai_option.WithEnvironmentProduction(),
+		oai_option.WithAPIKey(oaiSecretKey),
+	)
+	embedder := oai_embedder.New(oaiClient, oaiEmbedModel)
 
 	// define vectorizer
 	log.Println("defining vectorizer")

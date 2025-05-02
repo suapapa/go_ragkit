@@ -6,6 +6,8 @@ ragkit is a Go package designed to simplify the implementation of Retrieval-Augm
 It includes the definition and implementation of a vectorizer interface that performs document indexing and retrieval,
 providing tools for vectorization and semantic search capabilities.
 
+- [Package documentation](https://pkg.go.dev/github.com/suapapa/go_ragkit).
+
 ## Installation
 
 ```sh
@@ -58,8 +60,12 @@ func main() {
 
 ## Reference
 
+```sh
+docker run -p 8080:8080 -p 50051:50051 cr.weaviate.io/semitechnologies/weaviate:1.30.2
+```
+
+
 - [Weaviate with Ollama example](examples/weaviate-ollama/)
-- [Package documentation](https://pkg.go.dev/github.com/suapapa/go_ragkit).
 
 ## Contributing
 

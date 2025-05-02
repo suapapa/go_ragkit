@@ -15,14 +15,22 @@ type Ollama struct {
 	model  string
 }
 
-func NewOllama(client *ollama_api.Client, model string) *Ollama {
+func New(client *ollama_api.Client, model string) *Ollama {
 	return &Ollama{
 		client: client,
 		model:  model,
 	}
 }
 
-func (o *Ollama) Embed(ctx context.Context, texts ...string) ([][]float32, error) {
+func (o *Ollama) EmbedText(ctx context.Context, text string) ([]float32, error) {
+	embeddings, err := o.EmbedTexts(ctx, text)
+	if err != nil {
+		return nil, err
+	}
+	return embeddings[0], nil
+}
+
+func (o *Ollama) EmbedTexts(ctx context.Context, texts ...string) ([][]float32, error) {
 	embeddings := make([][]float32, len(texts))
 
 	for i, text := range texts {

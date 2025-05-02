@@ -15,8 +15,11 @@ type Vectorizer interface {
 
 // Embedder is a type that can embed texts into vectors
 type Embedder interface {
-	// Embed: Convert texts to embedding vectors
-	Embed(ctx context.Context, texts ...string) ([][]float32, error)
+	// EmbedText: Convert a single text to an embedding vector
+	EmbedText(ctx context.Context, text string) ([]float32, error)
+
+	// EmbedTexts: Convert texts to embedding vectors
+	EmbedTexts(ctx context.Context, texts ...string) ([][]float32, error)
 
 	fmt.Stringer
 	// // Dimension: Get the dimension of embedding vectors
