@@ -3,7 +3,7 @@
 ![ragkit_logo](_asset/ragkit_logo_256.webp)
 
 ragkit is a Go package designed to simplify the implementation of Retrieval-Augmented Generation (RAG) systems.
-It includes the definition and implementation of a vectorizer interface that performs document indexing and retrieval,
+It includes the definition and implementation of a VectorStore interface that performs document indexing and retrieval,
 providing tools for vectorization and semantic search capabilities.
 
 - [Package documentation](https://pkg.go.dev/github.com/suapapa/go_ragkit).
