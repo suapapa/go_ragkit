@@ -26,8 +26,8 @@ import (
 func main() {
     // Initialize vector store (Weaviate + Ollama)
     vstore, err := vstore_helper.NewWeaviateOllamaVectorStore(
-        "DoolyFamilyTree", // vector DB class name
-        DefaultOllamaEmbedModel, 
+        "DoolyFamily", // vector DB class name
+        vstore_helper.DefaultOllamaEmbedModel, 
     )
     if err != nil {
         panic(err)
@@ -38,24 +38,26 @@ func main() {
         []string{
             "고길동의 집에는 둘리, 도우너, 또치, 희동이, 철수, 영희가 살고 있다.",
             "희동이는 고길동의 조카이다.",
+            // ...
         },
         nil,
     )
 
     // Index documents
-    ctx := context.Background()
-    _, err = vstore.Index(ctx, docs...)
+    _, err = vstore.Index(context.Background(), docs...)
     if err != nil {
         panic(err)
     }
 
     // Perform semantic search
     query := "고길동과 희동이의 관계?"
-    results, err := vstore.RetrieveText(ctx, query, 1)
+    results, err := vstore.RetrieveText(context.Background(), query, 1)
     if err != nil {
         panic(err)
     }
-    fmt.Println(results[0].Text) // 희동이는 고길동의 조카이다.
+
+    // Print result
+    fmt.Println(results[0].Text) // <- 희동이는 고길동의 조카이다.
 }
 ```
 

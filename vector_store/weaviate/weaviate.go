@@ -33,7 +33,7 @@ func (w *Weaviate) Index(ctx context.Context, docs ...ragkit.Document) ([]string
 		var err error
 
 		if doc.ID == "" {
-			doc.ID = ragkit.GenerateID(doc.Text)
+			doc.ID = ragkit.GenerateID(doc.Text, doc.Metadata)
 		}
 
 		// Use provided vector if available, otherwise generate one
