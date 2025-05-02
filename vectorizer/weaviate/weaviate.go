@@ -153,5 +153,5 @@ func (w *Weaviate) RetrieveText(ctx context.Context, text string, topK int, meta
 } // Get near text results
 
 func (w *Weaviate) String() string {
-	return fmt.Sprintf("Weaviate vectorizer for class, %s powered by embedder: %s", w.className, w.embedder)
+	return fmt.Sprintf("Weaviate(class: %s, embedder: %s)", w.className, w.embedder)
 }

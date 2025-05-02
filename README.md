@@ -58,14 +58,14 @@ func main() {
 }
 ```
 
-## Reference
+## Examples
 
-```sh
-docker run -p 8080:8080 -p 50051:50051 cr.weaviate.io/semitechnologies/weaviate:1.30.2
+Pre-requirement - launch Weaviate for local vector DB:
+```
+docker run -it --rm -p 8080:8080 -p 50051:50051 cr.weaviate.io/semitechnologies/weaviate:1.30.2
 ```
 
-
-- [Weaviate with Ollama example](examples/weaviate-ollama/)
+- [Examples](examples/)
 
 ## Contributing
 
