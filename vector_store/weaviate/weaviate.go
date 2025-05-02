@@ -10,7 +10,7 @@ import (
 	"github.com/weaviate/weaviate-go-client/v4/weaviate/graphql"
 )
 
-var _ ragkit.Vectorizer = &Weaviate{}
+var _ ragkit.VectorStore = &Weaviate{}
 
 type Weaviate struct {
 	className string

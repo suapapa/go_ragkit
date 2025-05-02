@@ -5,14 +5,6 @@ import (
 	"fmt"
 )
 
-// Vectorizer is a combination of Indexer and Retriever
-type Vectorizer interface {
-	Indexer
-	Retriever
-
-	fmt.Stringer
-}
-
 // Embedder is a type that can embed texts into vectors
 type Embedder interface {
 	// EmbedText: Convert a single text to an embedding vector
@@ -24,6 +16,14 @@ type Embedder interface {
 	fmt.Stringer
 	// // Dimension: Get the dimension of embedding vectors
 	// Dimension() int
+}
+
+// VectorStore is a combination of Indexer and Retriever
+type VectorStore interface {
+	Indexer
+	Retriever
+
+	fmt.Stringer
 }
 
 // Indexer is a type that can index documents into a vector database
