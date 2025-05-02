@@ -11,11 +11,11 @@ import (
 var _ ragkit.Embedder = &OpenAI{}
 
 type OpenAI struct {
-	client oai.Client
+	client *oai.Client
 	model  string
 }
 
-func New(client oai.Client, model string) *OpenAI {
+func New(client *oai.Client, model string) *OpenAI {
 	return &OpenAI{
 		client: client,
 		model:  model,

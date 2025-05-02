@@ -32,7 +32,7 @@ func main() {
 		// oai_option.WithEnvironmentProduction(),
 		oai_option.WithAPIKey(oaiSecretKey),
 	)
-	embedder := oai_embedder.New(oaiClient, oaiEmbedModel)
+	embedder := oai_embedder.New(&oaiClient, oaiEmbedModel)
 
 	// define vectorizer
 	log.Println("defining vectorizer")
