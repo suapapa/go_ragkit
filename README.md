@@ -21,6 +21,7 @@ import (
     "context"
     "fmt"
     ragkit "github.com/suapapa/go_ragkit"
+	weaviate_vstore "github.com/suapapa/go_ragkit/vector_store/weaviate"
 )
 
 func main() {
@@ -33,8 +34,8 @@ func main() {
         nil,
     )
 
-    // Initialize vectorizer (example with Weaviate)
-    vectorizer, err := ragkit.NewWeaviateVectorizer(...)
+    // Initialize vector store (example with Weaviate)
+    vstore, err := weaviate_vstore.New(...)
     if err != nil {
         panic(err)
     }
@@ -42,15 +43,15 @@ func main() {
     // Index documents
     ctx := context.Background()
     for _, doc := range docs {
-        _, err = vectorizer.Index(ctx, doc)
+        _, err = vstore.Index(ctx, doc)
         if err != nil {
             panic(err)
         }
     }
 
     // Perform semantic search
-    query := "희동이와 고길동의 관계?"
-    results, err := vectorizer.RetrieveText(ctx, query, 1)
+    query := "고길동과 희동이의 관계?"
+    results, err := vstore.RetrieveText(ctx, query, 1)
     if err != nil {
         panic(err)
     }

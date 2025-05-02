@@ -18,7 +18,7 @@ type Weaviate struct {
 	embedder  ragkit.Embedder
 }
 
-func NewWeaviate(client *weaviate.Client, className string, embedder ragkit.Embedder) *Weaviate {
+func New(client *weaviate.Client, className string, embedder ragkit.Embedder) *Weaviate {
 	return &Weaviate{
 		className: ragkit.ToCamelCase(className),
 		client:    client,

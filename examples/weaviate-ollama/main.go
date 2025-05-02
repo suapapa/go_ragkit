@@ -13,7 +13,7 @@ import (
 
 	ollama_api "github.com/ollama/ollama/api"
 	ollama_embedder "github.com/suapapa/go_ragkit/embedder/ollama"
-	weaviate_vectorizer "github.com/suapapa/go_ragkit/vectorizer/weaviate"
+	weaviate_vstore "github.com/suapapa/go_ragkit/vector_store/weaviate"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate"
 )
 
@@ -46,8 +46,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	vectorizer := weaviate_vectorizer.NewWeaviate(weaviateClient, "FamilyTree", embedder)
-	fmt.Printf("vectorizer: %s\n", vectorizer)
+	vstore := weaviate_vstore.New(weaviateClient, "FamilyTree", embedder)
+	fmt.Printf("vectorizer: %s\n", vstore)
 
 	// index documents
 	log.Println("indexing documents")
@@ -65,14 +65,14 @@ func main() {
 	)
 	ctx := context.Background()
 	for _, doc := range docs {
-		if exist, err := vectorizer.Exists(ctx, doc.ID); err != nil {
+		if exist, err := vstore.Exists(ctx, doc.ID); err != nil {
 			panic(err)
 		} else if exist {
 			// log.Printf("document %s already exists", doc.ID)
 			continue
 		}
 
-		_, err = vectorizer.Index(ctx, doc)
+		_, err = vstore.Index(ctx, doc)
 		if err != nil {
 			panic(err)
 		}
@@ -81,7 +81,7 @@ func main() {
 	// retrieve documents
 	log.Println("retrieving documents")
 	query := "희동이와 고길동의 관계?"
-	results, err := vectorizer.RetrieveText(ctx, query, 3)
+	results, err := vstore.RetrieveText(ctx, query, 3)
 	if err != nil {
 		panic(err)
 	}
