@@ -2,10 +2,10 @@
 package ragkit
 
 import (
-	"crypto/sha256"
 	"encoding/json"
-	"fmt"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 // MakeDocsFromTexts creates a slice of Document from a slice of texts with optional metadata.
@@ -18,21 +18,24 @@ func MakeDocsFromTexts(texts []string, metadata map[string]any) []Document {
 	return docs
 }
 
-// GenerateID creates a UUID-like string from the input text using SHA-256 hash.
-// The generated ID follows the format: 8-4-4-4-12 hexadecimal characters.
+// GenerateID creates a deterministic UUID v5 from the input text and metadata.
+// The generated ID is guaranteed to be unique for different inputs.
 func GenerateID(text string, metadata map[string]any) string {
-	hash := sha256.New()
+	// Create a namespace UUID (using SHA-256 of "ragkit" as the namespace)
+	namespace := uuid.NewSHA1(uuid.Nil, []byte("ragkit"))
 
-	var metadataB []byte
+	// Combine text and metadata into a single string
+	var input string
 	if metadata != nil {
-		metadataB, _ = json.Marshal(metadata)
-		hash.Write(metadataB)
+		metadataB, _ := json.Marshal(metadata)
+		input = text + string(metadataB)
+	} else {
+		input = text
 	}
 
-	hash.Write([]byte(text))
-	hashBytes := hash.Sum(nil)
-
-	return fmt.Sprintf("%08x-%04x-%04x-%04x-%012x", hashBytes[0:4], hashBytes[4:6], hashBytes[6:8], hashBytes[8:10], hashBytes[10:16])
+	// Generate UUID v5 using the namespace and input
+	id := uuid.NewSHA1(namespace, []byte(input))
+	return id.String()
 }
 
 func ToCamelCase(input string) string {

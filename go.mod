@@ -3,6 +3,7 @@ module github.com/suapapa/go_ragkit
 go 1.24.2
 
 require (
+	github.com/google/uuid v1.6.0
 	github.com/ollama/ollama v0.6.6
 	github.com/openai/openai-go v0.1.0-beta.10
 	github.com/weaviate/weaviate-go-client/v4 v4.16.1
@@ -19,7 +20,6 @@ require (
 	github.com/go-openapi/strfmt v0.23.0 // indirect
 	github.com/go-openapi/swag v0.22.3 // indirect
 	github.com/go-openapi/validate v0.21.0 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
