@@ -20,7 +20,7 @@ type Weaviate struct {
 
 func NewWeaviate(client *weaviate.Client, className string, embedder ragkit.Embedder) *Weaviate {
 	return &Weaviate{
-		className: className,
+		className: ragkit.ToCamelCase(className),
 		client:    client,
 		embedder:  embedder,
 	}
@@ -105,15 +105,13 @@ func (w *Weaviate) Retrieve(ctx context.Context, query []float32, topK int) ([]r
 	// Parse results
 	var results []ragkit.RetrievedDoc
 	if resultData, ok := response.Data["Get"].(map[string]any); ok {
-		switch resultData[w.className].(type) {
-		case []any:
-			for _, obj := range resultData[w.className].([]any) {
+		if classResultData, ok := resultData[w.className].([]any); ok {
+			for _, obj := range classResultData {
 				objMap := obj.(map[string]any)
 
 				var metadata map[string]any
-				switch objMap["metadata"].(type) {
-				case map[string]any:
-					metadata = objMap["metadata"].(map[string]any)
+				if metadata, ok = objMap["metadata"].(map[string]any); !ok {
+					metadata = make(map[string]any)
 				}
 
 				results = append(results, ragkit.RetrievedDoc{
@@ -124,8 +122,8 @@ func (w *Weaviate) Retrieve(ctx context.Context, query []float32, topK int) ([]r
 					Metadata: metadata,
 				})
 			}
-		case nil:
-			return nil, fmt.Errorf("no results found")
+		} else {
+			return nil, fmt.Errorf("no results found in class: %s", w.className)
 		}
 	} else {
 		return nil, fmt.Errorf("no results found")

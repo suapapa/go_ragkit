@@ -4,6 +4,7 @@ package ragkit
 import (
 	"crypto/sha256"
 	"fmt"
+	"strings"
 )
 
 // MakeDocsFromTexts creates a slice of Document from a slice of texts with optional metadata.
@@ -21,4 +22,19 @@ func MakeDocsFromTexts(texts []string, metadata map[string]any) []Document {
 func GenerateID(text string) string {
 	hash := sha256.Sum256([]byte(text))
 	return fmt.Sprintf("%08x-%04x-%04x-%04x-%012x", hash[0:4], hash[4:6], hash[6:8], hash[8:10], hash[10:16])
+}
+
+func ToCamelCase(input string) string {
+	words := strings.FieldsFunc(input, func(r rune) bool {
+		return r == '_' || r == '-' || r == ' '
+	})
+
+	for i, word := range words {
+		if len(word) == 0 {
+			continue
+		}
+		words[i] = strings.ToUpper(string(word[0])) + strings.ToLower(word[1:])
+	}
+
+	return strings.Join(words, "")
 }
