@@ -25,7 +25,7 @@ func NewWeaviateOllamaVectorStore(
 		return nil, err
 	}
 	ollamaClient := ollama_api.NewClient(ollamaURL, http.DefaultClient)
-	embedder := ollama_embedder.New(ollamaClient, cmp.Or(ollamaEmbedModel, defaultOllamaEmbedModel))
+	embedder := ollama_embedder.New(ollamaClient, cmp.Or(ollamaEmbedModel, DefaultOllamaEmbedModel))
 
 	// initialize weaviate
 	weaviateURL, err := url.Parse(weaviateAddr)

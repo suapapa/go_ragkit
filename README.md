@@ -18,13 +18,21 @@ go get github.com/suapapa/go_ragkit
 
 ```go
 import (
-    "context"
-    "fmt"
+    // ...
     ragkit "github.com/suapapa/go_ragkit"
-	weaviate_vstore "github.com/suapapa/go_ragkit/vector_store/weaviate"
+	vstore_helper "github.com/suapapa/go_ragkit/vector_store/weaviate/helper"
 )
 
 func main() {
+    // Initialize vector store (Weaviate + Ollama)
+    vstore, err := vstore_helper.NewWeaviateOllamaVectorStore(
+        "DoolyFamilyTree", // vector DB class name
+        DefaultOllamaEmbedModel, 
+    )
+    if err != nil {
+        panic(err)
+    }
+
     // Create documents from text
     docs := ragkit.MakeDocsFromTexts(
         []string{
@@ -33,12 +41,6 @@ func main() {
         },
         nil,
     )
-
-    // Initialize vector store (example with Weaviate)
-    vstore, err := weaviate_vstore.New(...)
-    if err != nil {
-        panic(err)
-    }
 
     // Index documents
     ctx := context.Background()

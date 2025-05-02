@@ -40,7 +40,7 @@ func IndexAndRetriveExample(vstore ragkit.VectorStore) {
 
 	// retrieve documents
 	log.Println("retrieving documents")
-	query := "희동이와 고길동의 관계?"
+	query := "고길동 희동이의 관계?"
 	results, err := vstore.RetrieveText(ctx, query, 3)
 	if err != nil {
 		panic(err)

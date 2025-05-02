@@ -27,7 +27,7 @@ func NewWeaviateOpenAIVectorStore(
 	opts = append(opts, oaiOptions...)
 
 	oaiClient := oai.NewClient(opts...)
-	embedder := oai_embedder.New(&oaiClient, cmp.Or(oaiEmbedModel, defaultOaiEmbedModel))
+	embedder := oai_embedder.New(&oaiClient, cmp.Or(oaiEmbedModel, DefaultOAIEmbedModel))
 
 	// initialize weaviate
 	weaviateURL, err := url.Parse(weaviateAddr)
