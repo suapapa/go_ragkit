@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"sync"
 
 	ragkit "github.com/suapapa/go_ragkit"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate"
@@ -16,6 +17,8 @@ type Weaviate struct {
 	className string
 	client    *weaviate.Client
 	embedder  ragkit.Embedder
+
+	mu sync.Mutex
 }
 
 func New(client *weaviate.Client, className string, embedder ragkit.Embedder) *Weaviate {
@@ -27,6 +30,9 @@ func New(client *weaviate.Client, className string, embedder ragkit.Embedder) *W
 }
 
 func (w *Weaviate) Index(ctx context.Context, docs ...ragkit.Document) ([]string, error) {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+
 	var ids []string
 	for _, doc := range docs {
 		var embedding []float32
@@ -69,6 +75,9 @@ func (w *Weaviate) Index(ctx context.Context, docs ...ragkit.Document) ([]string
 }
 
 func (w *Weaviate) Delete(ctx context.Context, id string) error {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+
 	return w.client.Data().Deleter().
 		WithClassName(w.className).
 		WithID(id).
@@ -76,6 +85,9 @@ func (w *Weaviate) Delete(ctx context.Context, id string) error {
 }
 
 func (w *Weaviate) Exists(ctx context.Context, id string) (bool, error) {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+
 	_, err := w.client.Data().ObjectsGetter().
 		WithClassName(w.className).
 		WithID(id).
@@ -90,6 +102,9 @@ func (w *Weaviate) Exists(ctx context.Context, id string) (bool, error) {
 }
 
 func (w *Weaviate) Retrieve(ctx context.Context, query []float32, topK int, metadataFieldNames ...string) ([]ragkit.RetrievedDoc, error) {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+
 	var metadataFields []graphql.Field
 	for _, name := range metadataFieldNames {
 		metadataFields = append(metadataFields, graphql.Field{Name: name})
