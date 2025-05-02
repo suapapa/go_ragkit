@@ -89,11 +89,22 @@ func (w *Weaviate) Exists(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
-func (w *Weaviate) Retrieve(ctx context.Context, query []float32, topK int) ([]ragkit.RetrievedDoc, error) {
+func (w *Weaviate) Retrieve(ctx context.Context, query []float32, topK int, metadataFieldNames ...string) ([]ragkit.RetrievedDoc, error) {
+	var metadataFields []graphql.Field
+	for _, name := range metadataFieldNames {
+		metadataFields = append(metadataFields, graphql.Field{Name: name})
+	}
+
 	// Get near vector results
 	response, err := w.client.GraphQL().Get().
 		WithClassName(w.className).
-		WithFields(graphql.Field{Name: "text"}, graphql.Field{Name: "metadata"}).
+		WithFields(
+			graphql.Field{Name: "text"},
+			graphql.Field{
+				Name:   "metadata",
+				Fields: metadataFields,
+			},
+		).
 		WithNearVector(w.client.GraphQL().NearVectorArgBuilder().
 			WithVector(query)).
 		WithLimit(topK).
@@ -110,8 +121,8 @@ func (w *Weaviate) Retrieve(ctx context.Context, query []float32, topK int) ([]r
 				objMap := obj.(map[string]any)
 
 				var metadata map[string]any
-				if metadata, ok = objMap["metadata"].(map[string]any); !ok {
-					metadata = make(map[string]any)
+				if m, ok := objMap["metadata"].(map[string]any); ok {
+					metadata = m
 				}
 
 				results = append(results, ragkit.RetrievedDoc{
@@ -132,13 +143,13 @@ func (w *Weaviate) Retrieve(ctx context.Context, query []float32, topK int) ([]r
 	return results, nil
 }
 
-func (w *Weaviate) RetrieveText(ctx context.Context, text string, topK int) ([]ragkit.RetrievedDoc, error) {
+func (w *Weaviate) RetrieveText(ctx context.Context, text string, topK int, metadataFieldNames ...string) ([]ragkit.RetrievedDoc, error) {
 	vectors, err := w.embedder.Embed(ctx, text)
 	if err != nil {
 		return nil, err
 	}
 
-	return w.Retrieve(ctx, vectors[0], topK)
+	return w.Retrieve(ctx, vectors[0], topK, metadataFieldNames...)
 } // Get near text results
 
 func (w *Weaviate) String() string {

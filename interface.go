@@ -47,10 +47,10 @@ type Document struct {
 // Retriever is a type that can retrieve documents from a vector database
 type Retriever interface {
 	// Retrieve: Return top-K documents based on query vector
-	Retrieve(ctx context.Context, query []float32, topK int) ([]RetrievedDoc, error)
+	Retrieve(ctx context.Context, query []float32, topK int, metadataFieldNames ...string) ([]RetrievedDoc, error)
 
 	// RetrieveText: Return top-K documents based on text query
-	RetrieveText(ctx context.Context, text string, topK int) ([]RetrievedDoc, error)
+	RetrieveText(ctx context.Context, text string, topK int, metadataFieldNames ...string) ([]RetrievedDoc, error)
 }
 
 // RetrievedDoc is a type that represents a retrieved document from vector database
