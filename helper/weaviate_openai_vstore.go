@@ -10,7 +10,7 @@ import (
 	oai_option "github.com/openai/openai-go/option"
 	oai_embedder "github.com/suapapa/go_ragkit/embedder/openai"
 	weaviate_vstore "github.com/suapapa/go_ragkit/vector_store/weaviate"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate"
+	"github.com/weaviate/weaviate-go-client/v5/weaviate"
 
 	ragkit "github.com/suapapa/go_ragkit"
 )

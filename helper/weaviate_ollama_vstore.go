@@ -10,7 +10,7 @@ import (
 	ollama_api "github.com/ollama/ollama/api"
 	ollama_embedder "github.com/suapapa/go_ragkit/embedder/ollama"
 	weaviate_vstore "github.com/suapapa/go_ragkit/vector_store/weaviate"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate"
+	"github.com/weaviate/weaviate-go-client/v5/weaviate"
 
 	ragkit "github.com/suapapa/go_ragkit"
 )

@@ -12,7 +12,7 @@ import (
 	ollama_embedder "github.com/suapapa/go_ragkit/embedder/ollama"
 	"github.com/suapapa/go_ragkit/examples/common"
 	weaviate_vstore "github.com/suapapa/go_ragkit/vector_store/weaviate"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate"
+	"github.com/weaviate/weaviate-go-client/v5/weaviate"
 )
 
 var (
