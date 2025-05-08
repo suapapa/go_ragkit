@@ -26,7 +26,7 @@ func New(connStr string, className string, embedder ragkit.Embedder) *PGVector {
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v", err)
 	}
-	defer conn.Close(context.Background())
+	// defer conn.Close(context.Background())
 
 	ret := &PGVector{
 		className: className,
@@ -42,13 +42,17 @@ func New(connStr string, className string, embedder ragkit.Embedder) *PGVector {
 	return ret
 }
 
+func (p *PGVector) Close() error {
+	return p.conn.Close(context.Background())
+}
+
 // ensureTable creates the table if it doesn't exist
 func (p *PGVector) ensureTable(ctx context.Context) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
 	// Create the pgvector extension if it doesn't exist
-	_, err := p.conn.Exec(ctx, `CREATE EXTENSION IF NOT EXISTS vector`)
+	_, err := p.conn.Exec(ctx, `CREATE EXTENSION IF NOT EXISTS vector SCHEMA public;`)
 	if err != nil {
 		return fmt.Errorf("failed to create pgvector extension: %w", err)
 	}
@@ -60,6 +64,11 @@ func (p *PGVector) ensureTable(ctx context.Context) error {
 			text TEXT NOT NULL,
 			metadata JSONB,
 			embedding vector(1536)
+			-- embedding 컬럼의 타입이 어느 스키마의 vector 타입인지 명확히 하려면, 
+			-- "public.vector(1536)"처럼 스키마를 명시할 수 있습니다.
+			-- 예: embedding public.vector(1536)
+			-- vector 확장이 어느 스키마에 설치되어 있는지 확인하려면 아래 쿼리를 사용할 수 있습니다:
+			-- SELECT n.nspname FROM pg_extension e JOIN pg_namespace n ON e.extnamespace = n.oid WHERE e.extname = 'vector';
 		)
 	`, p.className))
 	if err != nil {
