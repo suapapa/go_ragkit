@@ -27,7 +27,7 @@ func NewPGVectorOpenAIVectorStore(
 	embedder := oai_embedder.New(&oaiClient, cmp.Or(oaiEmbedModel, DefaultOAIEmbedModel))
 
 	// initialize pgvector
-	pgvector := pgvector_vstore.New(pgvectorConnStr, vectorDBClassName, embedder)
+	pgvector := pgvector_vstore.New(pgvectorConnStr, 1536, vectorDBClassName, embedder)
 
 	return pgvector, nil
 }
