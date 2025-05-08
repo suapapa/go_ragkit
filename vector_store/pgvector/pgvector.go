@@ -47,8 +47,14 @@ func (p *PGVector) ensureTable(ctx context.Context) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
+	// Create the pgvector extension if it doesn't exist
+	_, err := p.conn.Exec(ctx, `CREATE EXTENSION IF NOT EXISTS vector`)
+	if err != nil {
+		return fmt.Errorf("failed to create pgvector extension: %w", err)
+	}
+
 	// Create the table if it doesn't exist
-	_, err := p.conn.Exec(ctx, fmt.Sprintf(`
+	_, err = p.conn.Exec(ctx, fmt.Sprintf(`
 		CREATE TABLE IF NOT EXISTS %s (
 			id TEXT PRIMARY KEY,
 			text TEXT NOT NULL,
