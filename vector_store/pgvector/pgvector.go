@@ -17,11 +17,12 @@ type PGVector struct {
 	className string
 	conn      *pgx.Conn
 	embedder  ragkit.Embedder
+	dimension int
 
 	mu sync.Mutex
 }
 
-func New(connStr string, className string, embedder ragkit.Embedder) *PGVector {
+func New(connStr string, dimension int, className string, embedder ragkit.Embedder) *PGVector {
 	conn, err := pgx.Connect(context.Background(), connStr)
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v", err)
@@ -32,6 +33,7 @@ func New(connStr string, className string, embedder ragkit.Embedder) *PGVector {
 		className: className,
 		conn:      conn,
 		embedder:  embedder,
+		dimension: dimension,
 	}
 
 	err = ret.ensureTable(context.Background())
@@ -63,14 +65,14 @@ func (p *PGVector) ensureTable(ctx context.Context) error {
 			id TEXT PRIMARY KEY,
 			text TEXT NOT NULL,
 			metadata JSONB,
-			embedding vector(1536)
+			embedding vector(%d)
 			-- embedding 컬럼의 타입이 어느 스키마의 vector 타입인지 명확히 하려면, 
 			-- "public.vector(1536)"처럼 스키마를 명시할 수 있습니다.
 			-- 예: embedding public.vector(1536)
 			-- vector 확장이 어느 스키마에 설치되어 있는지 확인하려면 아래 쿼리를 사용할 수 있습니다:
 			-- SELECT n.nspname FROM pg_extension e JOIN pg_namespace n ON e.extnamespace = n.oid WHERE e.extname = 'vector';
 		)
-	`, p.className))
+	`, p.className, p.dimension))
 	if err != nil {
 		return fmt.Errorf("failed to create table: %w", err)
 	}
