@@ -31,6 +31,7 @@ RAG용 VectorStore / Embedder Go 라이브러리. AI 에이전트·기여자용 
 | `OPENAI_ENDPOINT` | OpenAI 호환 base URL (비우면 SDK 기본) |
 | `OPENAI_APIKEY` | API 키 |
 | `OPENAI_EMBED_MODEL` | 기본 `text-embedding-3-small` |
+| `OPENAI_EMBED_DIM` | 임베딩 차원. 기본 `1536`. 모델 출력·기존 `vector(N)` 컬럼과 일치해야 함 |
 | `PGVECTOR_CONN` | PostgreSQL/pgvector 연결 문자열 (`NewPGVectorOpenAIVectorStore`) |
 | `WEAVIATE_ADDR` | 기본 `http://localhost:8080` (`NewWeaviate*`) |
 

@@ -34,5 +34,5 @@ func NewPGVectorOpenAIVectorStore(
 	oaiClient := oai.NewClient(opts...)
 	embedder := oai_embedder.New(&oaiClient, cmp.Or(oaiEmbedModel, DefaultOAIEmbedModel()))
 
-	return pgvector_vstore.New(connStr, 1536, vectorDBClassName, embedder), nil
+	return pgvector_vstore.New(connStr, DefaultOAIEmbedDim(), vectorDBClassName, embedder), nil
 }

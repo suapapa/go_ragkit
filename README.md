@@ -25,7 +25,7 @@ import (
 
 func main() {
     // Initialize vector store (pgvector + OpenAI-compatible embedder)
-    // Uses PGVECTOR_CONN, OPENAI_ENDPOINT, OPENAI_APIKEY, OPENAI_EMBED_MODEL
+    // Uses PGVECTOR_CONN, OPENAI_ENDPOINT, OPENAI_APIKEY, OPENAI_EMBED_MODEL, OPENAI_EMBED_DIM
     vstore, err := ragkit_helper.NewPGVectorOpenAIVectorStore(
         "dooly_family", // vector DB table name
         ragkit_helper.DefaultOAIEmbedModel(),
