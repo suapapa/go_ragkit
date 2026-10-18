@@ -20,17 +20,20 @@ func NewWeaviateOpenAIVectorStore(
 	oaiEmbedModel string,
 	oaiOptions ...oai_option.RequestOption,
 ) (ragkit.VectorStore, error) {
-	// initialize openai
+	// initialize openai (OPENAI_ENDPOINT / OPENAI_APIKEY / OPENAI_EMBED_MODEL)
 	opts := []oai_option.RequestOption{
-		oai_option.WithAPIKey(oaiApiKey),
+		oai_option.WithAPIKey(oaiApiKey()),
+	}
+	if ep := oaiEndpoint(); ep != "" {
+		opts = append(opts, oai_option.WithBaseURL(ep))
 	}
 	opts = append(opts, oaiOptions...)
 
 	oaiClient := oai.NewClient(opts...)
-	embedder := oai_embedder.New(&oaiClient, cmp.Or(oaiEmbedModel, DefaultOAIEmbedModel))
+	embedder := oai_embedder.New(&oaiClient, cmp.Or(oaiEmbedModel, DefaultOAIEmbedModel()))
 
 	// initialize weaviate
-	weaviateURL, err := url.Parse(weaviateAddr)
+	weaviateURL, err := url.Parse(weaviateAddr())
 	if err != nil {
 		return nil, err
 	}

@@ -16,8 +16,9 @@ import (
 )
 
 var (
-	ollamaAddr       = cmp.Or(os.Getenv("OLLAMA_ADDR"), "http://localhost:11434")
-	ollamaEmbedModel = cmp.Or(os.Getenv("OLLAMA_EMBED_MODEL"), "bge-m3:latest")
+	// Prefer OpenAI-compatible APIs via OPENAI_*; Ollama address is fixed for this example.
+	ollamaAddr       = "http://localhost:11434"
+	ollamaEmbedModel = "bge-m3:latest"
 	weaviateAddr     = cmp.Or(os.Getenv("WEAVIATE_ADDR"), "http://localhost:8080")
 )
 

@@ -16,8 +16,9 @@ import (
 )
 
 var (
-	oaiApiKey     = cmp.Or(os.Getenv("OPENAI_SECRET_KEY"), "")
-	oaiEmbedModel = cmp.Or(os.Getenv("OPEAI_EMBED_MODEL"), "text-embedding-3-small")
+	oaiEndpoint   = os.Getenv("OPENAI_ENDPOINT")
+	oaiApiKey     = os.Getenv("OPENAI_APIKEY")
+	oaiEmbedModel = cmp.Or(os.Getenv("OPENAI_EMBED_MODEL"), "text-embedding-3-small")
 	weaviateAddr  = cmp.Or(os.Getenv("WEAVIATE_ADDR"), "http://localhost:8080")
 )
 
@@ -25,10 +26,13 @@ func main() {
 	// define embedder
 	log.Println("defining embedder")
 
-	oaiClient := oai.NewClient(
-		// oai_option.WithEnvironmentProduction(),
+	opts := []oai_option.RequestOption{
 		oai_option.WithAPIKey(oaiApiKey),
-	)
+	}
+	if oaiEndpoint != "" {
+		opts = append(opts, oai_option.WithBaseURL(oaiEndpoint))
+	}
+	oaiClient := oai.NewClient(opts...)
 	embedder := oai_embedder.New(&oaiClient, oaiEmbedModel)
 
 	// define vstore

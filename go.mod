@@ -1,6 +1,6 @@
 module github.com/suapapa/go_ragkit
 
-go 1.27.0
+go 1.27
 
 require (
 	github.com/google/uuid v1.6.0

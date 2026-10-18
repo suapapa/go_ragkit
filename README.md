@@ -24,10 +24,11 @@ import (
 )
 
 func main() {
-    // Initialize vector store (Weaviate + Ollama)
-    vstore, err := vstore_helper.NewWeaviateOllamaVectorStore(
+    // Initialize vector store (Weaviate + OpenAI-compatible embedder)
+    // Uses OPENAI_ENDPOINT, OPENAI_APIKEY, OPENAI_EMBED_MODEL
+    vstore, err := vstore_helper.NewWeaviateOpenAIVectorStore(
         "DoolyFamily", // vector DB class name
-        vstore_helper.DefaultOllamaEmbedModel, 
+        vstore_helper.DefaultOAIEmbedModel(),
     )
     if err != nil {
         panic(err)

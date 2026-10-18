@@ -19,7 +19,7 @@ func NewWeaviateOllamaVectorStore(
 	vectorDBClassName string,
 	ollamaEmbedModel string,
 ) (ragkit.VectorStore, error) {
-	// initialize ollama
+	// initialize ollama (hardcoded default address; prefer OpenAI-compatible endpoint)
 	ollamaURL, err := url.Parse(ollamaAddr)
 	if err != nil {
 		return nil, err
@@ -28,7 +28,7 @@ func NewWeaviateOllamaVectorStore(
 	embedder := ollama_embedder.New(ollamaClient, cmp.Or(ollamaEmbedModel, DefaultOllamaEmbedModel))
 
 	// initialize weaviate
-	weaviateURL, err := url.Parse(weaviateAddr)
+	weaviateURL, err := url.Parse(weaviateAddr())
 	if err != nil {
 		return nil, err
 	}
