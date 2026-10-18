@@ -9,6 +9,10 @@ func weaviateAddr() string {
 	return cmp.Or(os.Getenv("WEAVIATE_ADDR"), "http://localhost:8080")
 }
 
+func pgvectorConn() string {
+	return os.Getenv("PGVECTOR_CONN")
+}
+
 func oaiEndpoint() string {
 	return os.Getenv("OPENAI_ENDPOINT")
 }

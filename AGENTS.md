@@ -10,7 +10,7 @@ RAG용 VectorStore / Embedder Go 라이브러리. AI 에이전트·기여자용 
 
 1. [`README.md`](README.md)
 2. [`interface.go`](interface.go) — `Embedder`, `VectorStore` 계약
-3. [`helper/`](helper/) — Weaviate/OpenAI 조합 헬퍼
+3. [`helper/`](helper/) — Weaviate/pgvector + OpenAI 조합 헬퍼
 4. [`examples/`](examples/) — 로컬 실행 예제
 
 ## 레이아웃
@@ -19,7 +19,7 @@ RAG용 VectorStore / Embedder Go 라이브러리. AI 에이전트·기여자용 
 |------|------|
 | `embedder/` | OpenAI·Ollama 임베더 구현 |
 | `vector_store/` | Weaviate·pgvector 스토어 |
-| `helper/` | 자주 쓰는 조합 팩토리 (`NewWeaviateOpenAIVectorStore` 등) |
+| `helper/` | 자주 쓰는 조합 팩토리 (`NewPGVectorOpenAIVectorStore`, `NewWeaviateOpenAIVectorStore` 등) |
 | `examples/` | 독립 실행 예제 |
 
 ## 환경변수 (OpenAI 경로)
@@ -31,7 +31,8 @@ RAG용 VectorStore / Embedder Go 라이브러리. AI 에이전트·기여자용 
 | `OPENAI_ENDPOINT` | OpenAI 호환 base URL (비우면 SDK 기본) |
 | `OPENAI_APIKEY` | API 키 |
 | `OPENAI_EMBED_MODEL` | 기본 `text-embedding-3-small` |
-| `WEAVIATE_ADDR` | 기본 `http://localhost:8080` |
+| `PGVECTOR_CONN` | PostgreSQL/pgvector 연결 문자열 (`NewPGVectorOpenAIVectorStore`) |
+| `WEAVIATE_ADDR` | 기본 `http://localhost:8080` (`NewWeaviate*`) |
 
 Ollama 전용 env (`OLLAMA_ADDR` 등)는 사용하지 않습니다. Ollama 헬퍼는 하드코딩 기본값만 둡니다.
 

@@ -2,6 +2,7 @@ package helper
 
 import (
 	"cmp"
+	"fmt"
 
 	oai "github.com/openai/openai-go"
 	oai_option "github.com/openai/openai-go/option"
@@ -12,11 +13,15 @@ import (
 )
 
 func NewPGVectorOpenAIVectorStore(
-	pgvectorConnStr string,
 	vectorDBClassName string,
 	oaiEmbedModel string,
 	oaiOptions ...oai_option.RequestOption,
 ) (ragkit.VectorStore, error) {
+	connStr := pgvectorConn()
+	if connStr == "" {
+		return nil, fmt.Errorf("PGVECTOR_CONN environment variable is not set")
+	}
+
 	// initialize openai (OPENAI_ENDPOINT / OPENAI_APIKEY / OPENAI_EMBED_MODEL)
 	opts := []oai_option.RequestOption{
 		oai_option.WithAPIKey(oaiApiKey()),
@@ -29,8 +34,5 @@ func NewPGVectorOpenAIVectorStore(
 	oaiClient := oai.NewClient(opts...)
 	embedder := oai_embedder.New(&oaiClient, cmp.Or(oaiEmbedModel, DefaultOAIEmbedModel()))
 
-	// initialize pgvector
-	pgvector := pgvector_vstore.New(pgvectorConnStr, 1536, vectorDBClassName, embedder)
-
-	return pgvector, nil
+	return pgvector_vstore.New(connStr, 1536, vectorDBClassName, embedder), nil
 }

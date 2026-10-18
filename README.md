@@ -20,15 +20,15 @@ go get github.com/suapapa/go_ragkit
 import (
     // ...
     ragkit "github.com/suapapa/go_ragkit"
-    vstore_helper "github.com/suapapa/go_ragkit/vector_store/weaviate/helper"
+    ragkit_helper "github.com/suapapa/go_ragkit/helper"
 )
 
 func main() {
-    // Initialize vector store (Weaviate + OpenAI-compatible embedder)
-    // Uses OPENAI_ENDPOINT, OPENAI_APIKEY, OPENAI_EMBED_MODEL
-    vstore, err := vstore_helper.NewWeaviateOpenAIVectorStore(
-        "DoolyFamily", // vector DB class name
-        vstore_helper.DefaultOAIEmbedModel(),
+    // Initialize vector store (pgvector + OpenAI-compatible embedder)
+    // Uses PGVECTOR_CONN, OPENAI_ENDPOINT, OPENAI_APIKEY, OPENAI_EMBED_MODEL
+    vstore, err := ragkit_helper.NewPGVectorOpenAIVectorStore(
+        "dooly_family", // vector DB table name
+        ragkit_helper.DefaultOAIEmbedModel(),
     )
     if err != nil {
         panic(err)
@@ -64,14 +64,9 @@ func main() {
 
 ## Examples
 
-Pre-requirement - launch Weaviate for local vector DB:
-```sh
-docker run -it --rm \
-  -p 8080:8080 -p 50051:50051 \
-  cr.weaviate.io/semitechnologies/weaviate:1.30.2
-```
+Pre-requirement for pgvector helpers — Postgres with the `vector` extension, and `PGVECTOR_CONN` set.
 
-- [Examples](examples/)
+Weaviate examples still live under [`examples/`](examples/) (`WEAVIATE_ADDR`).
 
 ## Contributing
 
