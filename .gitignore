@@ -1,2 +1,34 @@
-.gitignore
-*.sh
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Example binaries
+/examples/**/weaviate-*
+/examples/common/common
+
+# Coverage / profiling
+*.coverprofile
+coverage.out
+coverage.html
+
+# Dependencies
+vendor/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
